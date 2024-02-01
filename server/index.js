@@ -9,9 +9,16 @@ var io = require('socket.io')(server,{
     }
 });
 
-//utilizamo un middleware para cargar una vista statica para cargar un formulario de la carpeta de client
 
-app.use(express.static('client'))
+//guardamos los mensajes aqui porque no utilizamos bbdd
+var messages= [{
+    id:1,
+    text:'Bienvenido al chat privado',
+    nickname:'bot-1'
+}];
+
+//utilizamo un middleware para cargar una vista statica para cargar un formulario de la carpeta de client
+app.use(express.static('client'));
 
 //para hacer una ruta tenemos que utilizar express
 app.get('/hola-mundo',function(req,res){
@@ -19,10 +26,23 @@ app.get('/hola-mundo',function(req,res){
 })
 
 //abrir una conexion al socket llamamos al metodo on y lanzamos el evento connection 
-io.on('conection',function(socket){
+io.on('connection',function(socket){
     //en el parametro de la funcion de callback vamso a recibir un parametro socket con toda la informacion del socket  
     //cuando alguien se conecte a nuestro socket nos va a mandar un consoel.log
-    console.log('el cleinte con ip'+socket.handshake.adress+'se ha conectado');
+    console.log('el cliente con ip '+socket.handshake.adress+' se ha conectado');
+
+    //emitimo el mensaje 
+    socket.emit('messages',messages);
+
+    //recogemos el mensaje desde el formulario que nos lo estamos enviando desde main.js
+    socket.on('add-message',function(data){
+        //anadimos los mensajes al array
+        messages.push(data);
+        //vuelvo a emitir el array
+        io.emit('messages',messages);
+
+    });
+
 });
 
 //aqui ya terndriamos ese servidor de express
