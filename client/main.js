@@ -26,7 +26,10 @@ function render(data) {
         //con el join le concatenamos un espacio entre elemento y elemento 
     }).join(' ');
     //aqui seleccionamos el elemento del dom message para meterle dentro el contenido de la var html
-    document.getElementById('messages').innerHTML = html;
+ var div_msgs = document.getElementById('messages');
+ div_msgs.innerHTML = html;
+//vamos a dejar siempre el scroll abajo cuando enviemos msg
+ div_msgs.scrollTop =div_msgs.scrollHeight;
 }
 //capta el mensaje del dom y lo envia a el servidor
 function addMessage(event){
